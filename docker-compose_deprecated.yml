@@ -20,9 +20,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
   # Redis Cache
   redis:
@@ -39,15 +36,12 @@ services:
       interval: 10s
       timeout: 3s
       retries: 5
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
-  # FastAPI Backend (간단한 버전)
+  # FastAPI Backend
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile.simple
+      dockerfile: Dockerfile
     container_name: python-learning-backend
     environment:
       - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/python_learning
@@ -67,9 +61,6 @@ services:
     networks:
       - python-learning-network
     restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
   # React Frontend
   frontend:
@@ -90,15 +81,12 @@ services:
     networks:
       - python-learning-network
     restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
-  # Python Code Runner (간단한 버전)
+  # Python Code Runner (격리된 실행 환경)
   code-runner:
     build:
       context: ./code-runner
-      dockerfile: Dockerfile.simple
+      dockerfile: Dockerfile
     container_name: python-learning-code-runner
     environment:
       - EXECUTION_TIMEOUT=30
@@ -111,9 +99,6 @@ services:
     networks:
       - python-learning-network
     restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
     # 보안을 위한 제한
     security_opt:
       - no-new-privileges:true
@@ -132,5 +117,3 @@ volumes:
 networks:
   python-learning-network:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: python-learning-br0
