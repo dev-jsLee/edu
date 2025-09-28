@@ -1,9 +1,6 @@
 # 웹 서버
 fastapi==0.104.1
-uvicorn[standard]==0.24.0
-
-# 코드 실행 관련
-subprocess32==3.5.4; python_version < '3.0'
+uvicorn==0.24.0
 
 # 보안 및 제한
 psutil==5.9.6
