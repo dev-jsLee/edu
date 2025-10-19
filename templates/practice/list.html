@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문제 풀이 - Python 학습 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/practice.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">🐍 Python 학습</a>
+            <ul>
+                <li><a href="/">홈</a></li>
+                <li><a href="/materials">수업 자료</a></li>
+                <li><a href="/practice">문제 풀이</a></li>
+                <li><a href="/profile/history">내 기록</a></li>
+                <li id="auth-nav"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 2rem 0;">
+        <h1>💻 문제 풀이</h1>
+        
+        <div class="card mt-3">
+            <h3>연습 문제</h3>
+            <p>아래 문제를 클릭하여 코드를 작성하고 실행해보세요.</p>
+            
+            <div class="materials-list mt-2">
+                <div class="material-card" onclick="location.href='/practice/1'">
+                    <h3>문제 1: Hello World 출력하기</h3>
+                    <p class="material-description">Python의 기본 출력 함수를 사용하여 "Hello, World!"를 출력하세요.</p>
+                    <div class="material-meta">
+                        <span class="material-badge badge-beginner">초급</span>
+                    </div>
+                </div>
+                
+                <div class="material-card" onclick="location.href='/practice/2'">
+                    <h3>문제 2: 두 수의 합</h3>
+                    <p class="material-description">두 정수를 입력받아 합을 출력하는 프로그램을 작성하세요.</p>
+                    <div class="material-meta">
+                        <span class="material-badge badge-beginner">초급</span>
+                    </div>
+                </div>
+                
+                <div class="material-card" onclick="location.href='/practice/3'">
+                    <h3>문제 3: 리스트 합계</h3>
+                    <p class="material-description">리스트의 모든 요소의 합을 구하는 함수를 작성하세요.</p>
+                    <div class="material-meta">
+                        <span class="material-badge badge-intermediate">중급</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script>
+        // 로그인 필수
+        if (!requireLogin()) {
+            // requireLogin이 false를 반환하면 이미 리다이렉트됨
+        }
+
+        // 네비게이션 메뉴 설정
+        const authNav = document.getElementById('auth-nav');
+        if (isLoggedIn()) {
+            const user = getCurrentUser();
+            authNav.innerHTML = `
+                <span style="color: white; margin-right: 1rem;">👤 ${escapeHtml(user.username)}</span>
+                <a href="#" onclick="AuthAPI.logout(); return false;">로그아웃</a>
+            `;
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내 풀이 기록 - Python 학습 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/practice.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">🐍 Python 학습</a>
+            <ul>
+                <li><a href="/">홈</a></li>
+                <li><a href="/materials">수업 자료</a></li>
+                <li><a href="/practice">문제 풀이</a></li>
+                <li><a href="/profile/history">내 기록</a></li>
+                <li id="auth-nav"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 2rem 0;">
+        <h1>📊 내 풀이 기록</h1>
+        <p class="text-secondary">제출한 코드와 실행 결과를 확인할 수 있습니다.</p>
+
+        <div id="error-message" class="alert alert-error"></div>
+        <div id="loader" class="loader"></div>
+        
+        <div id="submissions-list" class="submissions-list mt-3"></div>
+        <div id="pagination"></div>
+    </div>
+
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/practice.js"></script>
+    <script>
+        // 로그인 필수
+        if (!requireLogin()) {
+            // requireLogin이 false를 반환하면 이미 리다이렉트됨
+        }
+
+        // 네비게이션 메뉴 설정
+        const authNav = document.getElementById('auth-nav');
+        if (isLoggedIn()) {
+            const user = getCurrentUser();
+            authNav.innerHTML = `
+                <span style="color: white; margin-right: 1rem;">👤 ${escapeHtml(user.username)}</span>
+                <a href="#" onclick="AuthAPI.logout(); return false;">로그아웃</a>
+            `;
+        }
+
+        // 페이지 로드 시 제출 기록 로드
+        loadMySubmissions();
+    </script>
+</body>
+</html>
+

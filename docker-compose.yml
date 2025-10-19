@@ -1,100 +1,30 @@
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: python-learning-db
-    environment:
-      POSTGRES_DB: python_learning
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres123
-      POSTGRES_HOST_AUTH_METHOD: trust
-    ports:
-      - "52043:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-    networks:
-      - python-learning-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
-
-  # Redis Cache
-  redis:
-    image: redis:7-alpine
-    container_name: python-learning-redis
-    ports:
-      - "52044:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - python-learning-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
-
-  # FastAPI Backend (간단한 버전)
-  backend:
+  # Flask 백엔드
+  flask-backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile.simple
-    container_name: python-learning-backend
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres123@postgres:5432/python_learning
-      - REDIS_URL=redis://redis:6379
-      - SECRET_KEY=your-secret-key-change-in-production
-      - ENVIRONMENT=development
-    ports:
-      - "52041:8000"
-    volumes:
-      - ./backend:/app
-      - /app/__pycache__
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - python-learning-network
-    restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
-
-  # React Frontend
-  frontend:
-    build:
-      context: ./frontend
+      context: ./flask-app
       dockerfile: Dockerfile
-    container_name: python-learning-frontend
+    container_name: python-learning-flask
     environment:
-      - REACT_APP_API_URL=http://localhost:52041
-      - REACT_APP_ENVIRONMENT=development
+      - FLASK_ENV=development
+      - SECRET_KEY=dev-secret-key-change-in-production
+      - DATABASE_URL=sqlite:///instance/app.db
+      - CODE_RUNNER_URL=http://code-runner:8080
+      - CODE_EXECUTION_TIMEOUT=30
     ports:
-      - "52040:3000"
+      - "5000:5000"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./flask-app:/app
+      - ./static:/app/static
+      - ./templates:/app/templates
+      - flask_data:/app/instance
     depends_on:
-      - backend
+      - code-runner
     networks:
-      - python-learning-network
+      - learning-network
     restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
 
-  # Python Code Runner (간단한 버전)
+  # Python 코드 러너
   code-runner:
     build:
       context: ./code-runner
@@ -105,16 +35,12 @@ services:
       - MAX_MEMORY=128m
       - MAX_CPU=0.5
     ports:
-      - "52042:8080"
+      - "8080:8080"
     volumes:
       - /tmp/code-execution:/tmp/execution:rw
     networks:
-      - python-learning-network
+      - learning-network
     restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 1.1.1.1
-    # 보안을 위한 제한
     security_opt:
       - no-new-privileges:true
     cap_drop:
@@ -123,14 +49,29 @@ services:
       - SETUID
       - SETGID
 
+  # PostgreSQL (추후 확장용 - 주석 처리)
+  # postgres:
+  #   image: postgres:15-alpine
+  #   container_name: python-learning-postgres
+  #   environment:
+  #     POSTGRES_DB: python_learning
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres123
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - learning-network
+  #   restart: unless-stopped
+
 volumes:
-  postgres_data:
+  flask_data:
     driver: local
-  redis_data:
-    driver: local
+  # postgres_data:
+  #   driver: local
 
 networks:
-  python-learning-network:
+  learning-network:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.name: python-learning-br0
+

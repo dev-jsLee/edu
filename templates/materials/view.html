@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>자료 보기 - Python 학습 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/materials.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">🐍 Python 학습</a>
+            <ul>
+                <li><a href="/">홈</a></li>
+                <li><a href="/materials">수업 자료</a></li>
+                <li><a href="/practice">문제 풀이</a></li>
+                <li><a href="/profile/history">내 기록</a></li>
+                <li id="auth-nav"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 2rem 0;">
+        <a href="/materials" class="btn btn-secondary mb-2">← 목록으로</a>
+        
+        <div id="error-message" class="alert alert-error"></div>
+        <div id="loader" class="loader"></div>
+        <div id="material-detail"></div>
+    </div>
+
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/materials.js"></script>
+    <script>
+        // 네비게이션 메뉴 설정
+        const authNav = document.getElementById('auth-nav');
+        if (isLoggedIn()) {
+            const user = getCurrentUser();
+            authNav.innerHTML = `
+                <span style="color: white; margin-right: 1rem;">👤 ${escapeHtml(user.username)}</span>
+                <a href="#" onclick="AuthAPI.logout(); return false;">로그아웃</a>
+            `;
+        } else {
+            authNav.innerHTML = '<a href="/login">로그인</a>';
+        }
+
+        // URL에서 자료 ID 추출
+        const pathParts = window.location.pathname.split('/');
+        const materialId = parseInt(pathParts[pathParts.length - 1]);
+
+        if (materialId) {
+            loadMaterialDetail(materialId);
+        } else {
+            showError('잘못된 자료 ID입니다');
+        }
+    </script>
+</body>
+</html>
+

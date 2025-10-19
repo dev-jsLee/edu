@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원가입 - Python 학습 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>🐍 회원가입</h1>
+                <p>Python 학습을 시작해보세요</p>
+            </div>
+
+            <div id="error-message" class="alert alert-error"></div>
+
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">사용자명</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="영문, 숫자, 언더스코어 (3-20자)"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email" class="form-label">이메일</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        class="form-input" 
+                        placeholder="example@email.com"
+                        required
+                        autocomplete="email"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="full-name" class="form-label">이름 (선택)</label>
+                    <input 
+                        type="text" 
+                        id="full-name" 
+                        name="full-name" 
+                        class="form-input" 
+                        placeholder="실명을 입력하세요"
+                        autocomplete="name"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="최소 6자 이상"
+                        required
+                        autocomplete="new-password"
+                    >
+                    <div class="password-requirements">
+                        최소 6자 이상 입력해주세요
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password-confirm" class="form-label">비밀번호 확인</label>
+                    <input 
+                        type="password" 
+                        id="password-confirm" 
+                        name="password-confirm" 
+                        class="form-input" 
+                        placeholder="비밀번호를 다시 입력하세요"
+                        required
+                        autocomplete="new-password"
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submit-btn" data-original-text="회원가입">
+                    회원가입
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>이미 계정이 있으신가요? <a href="/login">로그인</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="loader" class="loader"></div>
+
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/auth.js"></script>
+    <script>
+        // 이미 로그인되어 있으면 홈으로 리다이렉트
+        if (isLoggedIn()) {
+            window.location.href = '/';
+        }
+
+        // 회원가입 폼 제출 처리
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const fullName = document.getElementById('full-name').value.trim();
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('password-confirm').value;
+            
+            // 비밀번호 확인
+            if (password !== passwordConfirm) {
+                showError('비밀번호가 일치하지 않습니다');
+                return;
+            }
+            
+            setLoading(true, 'submit-btn');
+            
+            try {
+                const response = await AuthAPI.register(username, email, password, fullName);
+                
+                if (response.success) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                setLoading(false, 'submit-btn');
+            }
+        });
+    </script>
+</body>
+</html>
+

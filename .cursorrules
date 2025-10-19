@@ -1,0 +1,275 @@
+# AI Agent Rulebook - Python 학습 플랫폼
+
+## 프로젝트 개요
+Flask 기반 IT학원 학습 플랫폼입니다. 회원가입/로그인, 수업 자료 조회, 코드 실행 및 제출 기능을 제공합니다.
+
+## 파일 구조 규칙
+
+### 1. 파일 행 수 제한
+- **최대 300줄**: 모든 파일은 300줄을 초과하지 않아야 합니다
+- 초과 시: 모듈을 분리하여 별도 파일로 작성
+- 예외: 자동 생성 파일(마이그레이션 등)
+
+### 2. HTML/CSS/JS 분리
+- **HTML**: templates/ 디렉토리에 `.html` 파일로만 작성
+- **CSS**: static/css/ 디렉토리에 `.css` 파일로만 작성
+- **JavaScript**: static/js/ 디렉토리에 `.js` 파일로만 작성
+- **금지사항**:
+  - HTML 파일 내 `<style>` 태그 사용 금지
+  - HTML 파일 내 `<script>` 태그 내 로직 작성 금지 (외부 스크립트 로드만 허용)
+  - 인라인 스타일 (`style=""`) 최소화
+
+### 3. 디렉토리 구조
+```
+flask-app/
+  app/
+    models/       # 데이터베이스 모델 (파일당 1개 모델)
+    routes/       # API 라우트 (기능별 분리)
+    services/     # 비즈니스 로직 (도메인별 분리)
+    utils/        # 유틸리티 함수
+
+static/
+  css/           # 페이지/기능별 CSS 파일
+  js/            # 기능별 JavaScript 모듈
+
+templates/
+  auth/          # 인증 관련 HTML
+  materials/     # 수업 자료 HTML
+  practice/      # 문제 풀이 HTML
+  profile/       # 사용자 프로필 HTML
+```
+
+## 코딩 컨벤션
+
+### Python (Backend)
+1. **PEP 8 준수**: 
+   - 들여쓰기 4칸
+   - 함수/변수명: snake_case
+   - 클래스명: PascalCase
+   - 상수: UPPER_SNAKE_CASE
+
+2. **타입 힌팅 권장**:
+   ```python
+   def get_user(user_id: int) -> Optional[User]:
+       pass
+   ```
+
+3. **Docstring 작성**:
+   ```python
+   def function_name(param: type) -> return_type:
+       """
+       함수 설명
+       
+       Args:
+           param: 파라미터 설명
+       
+       Returns:
+           반환값 설명
+       """
+   ```
+
+4. **에러 처리**:
+   - Try-except 블록 사용
+   - 명확한 에러 메시지
+   - 데이터베이스 롤백 처리
+
+### JavaScript (Frontend)
+1. **ES6+ 문법 사용**:
+   - `const`, `let` (var 금지)
+   - Arrow function
+   - Template literals
+   - Destructuring
+   - async/await
+
+2. **네이밍**:
+   - 변수/함수: camelCase
+   - 상수: UPPER_SNAKE_CASE
+   - 클래스: PascalCase
+
+3. **함수 문서화**:
+   ```javascript
+   /**
+    * 함수 설명
+    * @param {type} param - 파라미터 설명
+    * @returns {type} 반환값 설명
+    */
+   ```
+
+4. **에러 처리**:
+   - try-catch 블록
+   - 사용자에게 명확한 메시지 표시
+
+### CSS
+1. **BEM 네이밍** 또는 명확한 클래스명:
+   ```css
+   .block__element--modifier
+   .auth-form
+   .material-card
+   ```
+
+2. **CSS 변수 사용** (common.css에 정의):
+   ```css
+   var(--primary-color)
+   var(--text-color)
+   ```
+
+3. **모바일 우선 반응형**:
+   ```css
+   @media (min-width: 768px) { }
+   ```
+
+## API 설계 규칙
+
+### 1. RESTful 원칙
+- `GET /api/resources` - 목록 조회
+- `GET /api/resources/:id` - 상세 조회
+- `POST /api/resources` - 생성
+- `PUT /api/resources/:id` - 수정
+- `DELETE /api/resources/:id` - 삭제
+
+### 2. 일관된 응답 형식
+```json
+{
+  "success": true/false,
+  "data": { ... },
+  "error": "에러 메시지" (실패 시)
+}
+```
+
+### 3. HTTP 상태 코드
+- `200`: 성공
+- `201`: 생성 성공
+- `400`: 잘못된 요청
+- `401`: 인증 필요
+- `403`: 권한 없음
+- `404`: 리소스 없음
+- `500`: 서버 오류
+
+### 4. 에러 처리
+- 명확한 에러 메시지 한글로 작성
+- 클라이언트가 이해할 수 있는 메시지
+- 보안 정보 노출 금지
+
+## 보안 규칙
+
+### 1. 비밀번호
+- Werkzeug의 `generate_password_hash` 사용
+- 최소 6자 이상 검증
+- 평문 저장 절대 금지
+
+### 2. JWT
+- 만료 시간 설정 (24시간)
+- Refresh token 제공
+- 서명 키는 환경 변수로 관리
+
+### 3. 입력 검증
+- 모든 API 엔드포인트에서 입력 검증
+- SQL Injection 방지: SQLAlchemy ORM 사용
+- XSS 방지: HTML 이스케이프 (escapeHtml 함수)
+
+### 4. CORS
+- 개발: 모든 origin 허용
+- 프로덕션: 특정 도메인만 허용
+
+## 데이터베이스 규칙
+
+### 1. 모델 정의
+- 파일당 1개 모델
+- 타임스탬프 필드 필수: `created_at`, `updated_at`
+- 관계 명확히 정의 (ForeignKey, relationship)
+
+### 2. 마이그레이션
+- 모델 변경 시 Flask-Migrate 사용
+- 마이그레이션 파일 커밋
+
+### 3. 쿼리 최적화
+- N+1 문제 주의 (eager loading)
+- 인덱스 활용 (자주 검색하는 필드)
+
+## Git 규칙
+
+### 커밋 메시지
+```
+feat: 새 기능 추가
+fix: 버그 수정
+refactor: 코드 리팩토링
+style: 코드 스타일 변경
+docs: 문서 수정
+test: 테스트 추가/수정
+chore: 빌드/설정 변경
+```
+
+### 브랜치 전략
+- `main`: 프로덕션
+- `develop`: 개발
+- `feature/*`: 기능 개발
+- `fix/*`: 버그 수정
+
+## 테스트 규칙
+
+### 1. 단위 테스트
+- 모든 서비스 함수 테스트
+- pytest 사용
+
+### 2. API 테스트
+- 주요 엔드포인트 테스트
+- 성공/실패 케이스 모두 테스트
+
+## 문서화 규칙
+
+### 1. README.md
+- 프로젝트 설명
+- 설치 방법
+- 실행 방법
+- API 문서 링크
+
+### 2. 코드 주석
+- 복잡한 로직에만 주석
+- 자명한 코드는 주석 불필요
+- 한글로 작성
+
+### 3. API 문서
+- Swagger/OpenAPI (Flask-RESTX 사용 고려)
+
+## 성능 최적화
+
+### 1. 프론트엔드
+- 이미지 최적화
+- CSS/JS 번들링 (추후)
+- 캐싱 활용
+
+### 2. 백엔드
+- 데이터베이스 쿼리 최적화
+- Redis 캐싱 (추후)
+- 페이지네이션
+
+## 배포 규칙
+
+### 1. 환경 변수
+- `.env` 파일 사용
+- 민감 정보 절대 하드코딩
+- `env.example` 제공
+
+### 2. Docker
+- 멀티 스테이지 빌드
+- 이미지 최적화
+- 헬스체크 설정
+
+### 3. 로깅
+- 적절한 로그 레벨
+- 에러 로그 필수
+- 개인정보 로그 금지
+
+## 코드 리뷰 체크리스트
+
+- [ ] 파일 행 수 300줄 이하
+- [ ] HTML/CSS/JS 분리
+- [ ] 타입 힌팅 (Python)
+- [ ] 에러 처리
+- [ ] 입력 검증
+- [ ] 보안 취약점 없음
+- [ ] 명확한 변수/함수명
+- [ ] 주석/문서화
+- [ ] 테스트 작성
+- [ ] 커밋 메시지 규칙 준수
+

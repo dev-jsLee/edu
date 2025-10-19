@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 - Python 학습 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>🐍 로그인</h1>
+                <p>Python 학습 플랫폼에 오신 것을 환영합니다</p>
+            </div>
+
+            <div id="error-message" class="alert alert-error"></div>
+
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">사용자명</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="사용자명을 입력하세요"
+                        required
+                        autocomplete="username"
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">비밀번호</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        class="form-input" 
+                        placeholder="비밀번호를 입력하세요"
+                        required
+                        autocomplete="current-password"
+                    >
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submit-btn" data-original-text="로그인">
+                    로그인
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>계정이 없으신가요? <a href="/register">회원가입</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="loader" class="loader"></div>
+
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/auth.js"></script>
+    <script>
+        // 이미 로그인되어 있으면 홈으로 리다이렉트
+        if (isLoggedIn()) {
+            window.location.href = '/';
+        }
+
+        // 로그인 폼 제출 처리
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            
+            setLoading(true, 'submit-btn');
+            
+            try {
+                const response = await AuthAPI.login(username, password);
+                
+                if (response.success) {
+                    window.location.href = '/';
+                }
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                setLoading(false, 'submit-btn');
+            }
+        });
+    </script>
+</body>
+</html>
+

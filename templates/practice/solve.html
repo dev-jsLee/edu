@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>문제 풀기 - Python 학습 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/practice.css">
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">🐍 Python 학습</a>
+            <ul>
+                <li><a href="/">홈</a></li>
+                <li><a href="/materials">수업 자료</a></li>
+                <li><a href="/practice">문제 풀이</a></li>
+                <li><a href="/profile/history">내 기록</a></li>
+                <li id="auth-nav"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="error-message" class="alert alert-error"></div>
+        <div id="success-message" class="alert alert-success"></div>
+        
+        <div class="practice-container">
+            <!-- 문제 섹션 -->
+            <div class="problem-section">
+                <div class="problem-header">
+                    <a href="/practice" class="btn btn-secondary mb-2">← 문제 목록</a>
+                    <h2 id="problem-title">문제 로딩 중...</h2>
+                </div>
+                <div id="problem-content" class="problem-description">
+                    <!-- 문제 내용이 여기에 동적으로 로드됩니다 -->
+                </div>
+            </div>
+
+            <!-- 코드 에디터 섹션 -->
+            <div class="editor-section">
+                <h3>코드 작성</h3>
+                
+                <div class="code-editor">
+                    <textarea 
+                        id="code-editor" 
+                        class="form-input" 
+                        placeholder="여기에 Python 코드를 작성하세요..."
+                    ># 여기에 코드를 작성하세요
+print("Hello, World!")</textarea>
+                </div>
+
+                <div class="editor-actions">
+                    <button 
+                        class="btn btn-primary" 
+                        id="run-btn" 
+                        onclick="executeCode()"
+                        data-original-text="실행"
+                    >
+                        ▶ 실행
+                    </button>
+                    <button 
+                        class="btn btn-success" 
+                        id="submit-btn" 
+                        onclick="submitCode()"
+                        data-original-text="제출"
+                    >
+                        ✓ 제출
+                    </button>
+                </div>
+
+                <div class="output-section">
+                    <div class="output-header">
+                        <h3>실행 결과</h3>
+                        <span id="execution-time" class="execution-time"></span>
+                    </div>
+                    <div id="output-content" class="output-content">
+코드를 실행하면 결과가 여기에 표시됩니다.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loader" class="loader"></div>
+
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/practice.js"></script>
+    <script>
+        // 로그인 필수
+        if (!requireLogin()) {
+            // requireLogin이 false를 반환하면 이미 리다이렉트됨
+        }
+
+        // 네비게이션 메뉴 설정
+        const authNav = document.getElementById('auth-nav');
+        if (isLoggedIn()) {
+            const user = getCurrentUser();
+            authNav.innerHTML = `
+                <span style="color: white; margin-right: 1rem;">👤 ${escapeHtml(user.username)}</span>
+                <a href="#" onclick="AuthAPI.logout(); return false;">로그아웃</a>
+            `;
+        }
+
+        // URL에서 문제 ID 추출
+        const pathParts = window.location.pathname.split('/');
+        currentProblemId = parseInt(pathParts[pathParts.length - 1]);
+
+        // 문제 내용 로드 (데모용 하드코딩)
+        const problems = {
+            1: {
+                title: '문제 1: Hello World 출력하기',
+                content: `
+                    <p><strong>문제 설명:</strong></p>
+                    <p>"Hello, World!"를 출력하는 프로그램을 작성하세요.</p>
+                    
+                    <div class="problem-examples">
+                        <div class="example">
+                            <h4>예제 출력</h4>
+                            <pre>Hello, World!</pre>
+                        </div>
+                    </div>
+                `,
+                starter: '# 여기에 코드를 작성하세요\nprint("Hello, World!")'
+            },
+            2: {
+                title: '문제 2: 두 수의 합',
+                content: `
+                    <p><strong>문제 설명:</strong></p>
+                    <p>두 정수 a와 b를 입력받아 합을 출력하세요.</p>
+                    
+                    <div class="problem-examples">
+                        <div class="example">
+                            <h4>예제</h4>
+                            <pre>a = 3
+b = 5
+print(a + b)  # 8</pre>
+                        </div>
+                    </div>
+                `,
+                starter: '# 두 수를 정의하고 합을 출력하세요\na = 3\nb = 5\n# 여기에 코드 작성'
+            },
+            3: {
+                title: '문제 3: 리스트 합계',
+                content: `
+                    <p><strong>문제 설명:</strong></p>
+                    <p>리스트의 모든 요소의 합을 구하는 함수 sum_list를 작성하세요.</p>
+                    
+                    <div class="problem-examples">
+                        <div class="example">
+                            <h4>예제</h4>
+                            <pre>def sum_list(numbers):
+    # 여기에 코드 작성
+    pass
+
+print(sum_list([1, 2, 3, 4, 5]))  # 15</pre>
+                        </div>
+                    </div>
+                `,
+                starter: 'def sum_list(numbers):\n    # 여기에 코드 작성\n    pass\n\n# 테스트\nprint(sum_list([1, 2, 3, 4, 5]))'
+            }
+        };
+
+        if (problems[currentProblemId]) {
+            const problem = problems[currentProblemId];
+            document.getElementById('problem-title').textContent = problem.title;
+            document.getElementById('problem-content').innerHTML = problem.content;
+            document.getElementById('code-editor').value = problem.starter;
+        } else {
+            document.getElementById('problem-title').textContent = '문제를 찾을 수 없습니다';
+            document.getElementById('problem-content').innerHTML = '<p>해당 문제가 존재하지 않습니다.</p>';
+        }
+    </script>
+</body>
+</html>
+

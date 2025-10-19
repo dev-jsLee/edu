@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 학습 플랫폼</title>
+    <link rel="stylesheet" href="/static/css/common.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #3776ab 0%, #2d5f8d 100%);
+            color: white;
+            padding: 4rem 0;
+            text-align: center;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .features {
+            padding: 3rem 0;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .feature-card {
+            background-color: var(--bg-color);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="/" class="logo">🐍 Python 학습</a>
+            <ul>
+                <li><a href="/">홈</a></li>
+                <li><a href="/materials">수업 자료</a></li>
+                <li><a href="/practice">문제 풀이</a></li>
+                <li><a href="/profile/history">내 기록</a></li>
+                <li id="auth-nav"></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <h1>Python을 배우는 가장 쉬운 방법</h1>
+            <p>IT학원 학생들을 위한 인터랙티브 학습 플랫폼</p>
+            <a href="/materials" class="btn btn-secondary" style="background-color: var(--secondary-color); color: var(--text-color);">
+                학습 시작하기
+            </a>
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: 1rem;">주요 기능</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>체계적인 학습 자료</h3>
+                    <p>기초부터 고급까지 단계별로 정리된 수업 자료를 제공합니다.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>실시간 코드 실행</h3>
+                    <p>브라우저에서 바로 Python 코드를 작성하고 실행해보세요.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>학습 기록 관리</h3>
+                    <p>내가 푼 문제와 제출한 코드를 한눈에 확인할 수 있습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/utils.js"></script>
+    <script>
+        // 로그인 상태에 따라 네비게이션 메뉴 변경
+        const authNav = document.getElementById('auth-nav');
+        if (isLoggedIn()) {
+            const user = getCurrentUser();
+            authNav.innerHTML = `
+                <span style="color: white; margin-right: 1rem;">👤 ${escapeHtml(user.username)}</span>
+                <a href="#" onclick="AuthAPI.logout(); return false;">로그아웃</a>
+            `;
+        } else {
+            authNav.innerHTML = '<a href="/login">로그인</a>';
+        }
+    </script>
+    <script src="/static/js/api.js"></script>
+</body>
+</html>
+

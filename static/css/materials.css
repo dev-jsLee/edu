@@ -1,0 +1,158 @@
+/**
+ * 수업 자료 페이지 스타일
+ */
+
+.materials-header {
+    background-color: var(--bg-color);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.materials-header h1 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.materials-filters {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.filter-group label {
+    font-weight: 500;
+}
+
+.filter-group select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: white;
+}
+
+.materials-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.material-card {
+    background-color: var(--bg-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.material-card:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.material-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+}
+
+.material-card h3 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+}
+
+.material-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.badge-beginner {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-intermediate {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.badge-advanced {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.material-description {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.material-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.material-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+}
+
+.tag {
+    background-color: var(--bg-secondary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--text-color);
+}
+
+/* 자료 상세 페이지 */
+.material-content {
+    background-color: var(--bg-color);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    line-height: 1.8;
+}
+
+.material-content h1,
+.material-content h2,
+.material-content h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+.material-content code {
+    background-color: var(--bg-secondary);
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-family: var(--code-font);
+    font-size: 0.9em;
+}
+
+.material-content pre {
+    background-color: #f4f4f4;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    overflow-x: auto;
+    margin: 1rem 0;
+}
+
+.material-content pre code {
+    background-color: transparent;
+    padding: 0;
+}
+

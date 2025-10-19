@@ -1,0 +1,22 @@
+# Flask 및 관련 패키지
+Flask==3.0.0
+Flask-SQLAlchemy==3.1.1
+Flask-Migrate==4.0.5
+Flask-JWT-Extended==4.5.3
+Flask-CORS==4.0.0
+
+# 데이터베이스
+SQLAlchemy==2.0.23
+
+# 보안
+Werkzeug==3.0.1
+
+# HTTP 클라이언트
+requests==2.31.0
+
+# 유틸리티
+python-dotenv==1.0.0
+
+# 개발용
+pytest==7.4.3
+
